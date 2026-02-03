@@ -3,6 +3,7 @@ package com.example.day3_sms_curd_operations.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +16,7 @@ public class studentModel {
     @Id // annotator to identify primary key
     private String id;
 
+    @NonNull
     private String name;
     private int age;
     private String email;

@@ -1,5 +1,6 @@
 package com.example.day3_sms_curd_operations.service;
 
+import com.example.day3_sms_curd_operations.dto.StudentRequestDto;
 import com.example.day3_sms_curd_operations.model.studentModel;
 import com.example.day3_sms_curd_operations.repository.studentRepository;
 import org.springframework.stereotype.Service;
@@ -40,4 +41,16 @@ public class studentService {
         repository.deleteById(id);
     }
 
+    public StudentRequestDto addStudent(StudentRequestDto dto){
+        studentModel.setAge(dto.getAge());
+        studentModel.setEmail(dto.getEmail());
+        studentModel.setName(dto.getName());
+
+
+    }
+
 }
+
+// services k andr 2 object kyo bnaye jaa rhi h
+// 1. for user
+// 2 . for database
