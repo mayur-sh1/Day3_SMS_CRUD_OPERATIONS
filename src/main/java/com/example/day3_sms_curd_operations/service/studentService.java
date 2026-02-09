@@ -1,54 +1,68 @@
 package com.example.day3_sms_curd_operations.service;
 
 import com.example.day3_sms_curd_operations.dto.StudentRequestDto;
+import com.example.day3_sms_curd_operations.dto.StudentResponseDto;
+import com.example.day3_sms_curd_operations.exception.StudentNotFoundException;
 import com.example.day3_sms_curd_operations.model.studentModel;
 import com.example.day3_sms_curd_operations.repository.studentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
 @Service // annotator to represent service
 public class studentService {
+
     private final studentRepository repository;
 
     public studentService(studentRepository repository) {
         this.repository = repository;
     }
 
-    // create
-    public studentModel addStudent(studentModel student){
-        return repository.save(student);
+    public StudentResponseDto addStudent(StudentRequestDto dto) {
+        studentModel student = new studentModel();
+        student.setName(dto.getName());
+        student.setAge(dto.getAge());
+        student.setEmail(dto.getEmail());
+
+        return map(repository.save(student));
     }
 
-    // display students
-    public List<studentModel> getStudents(){
-        return repository.findAll();
+    public List<StudentResponseDto> getAllStudents() {
+        return repository.findAll()
+                .stream()
+                .map(this::map)
+                .toList();
     }
 
-    // update student
-    public studentModel updateStudent(String id,studentModel student){
-       studentModel existingStudent =repository.findById(id)
-        .orElseThrow(()->new RuntimeException("No Student Found"));
+    public StudentResponseDto updateStudent(String id, StudentRequestDto dto) {
+        studentModel student = repository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundException("Student not found with id: " + id)
+                );
 
-       existingStudent.setName(student.getName());
-       existingStudent.setAge(student.getAge());
-       existingStudent.setEmail(student.getEmail());
+        student.setName(dto.getName());
+        student.setAge(dto.getAge());
+        student.setEmail(dto.getEmail());
 
-       return repository.save(existingStudent);
+        return map(repository.save(student));
     }
-    // delete student
+
     public void deleteStudent(String id) {
+        if (!repository.existsById(id)) {
+            throw new StudentNotFoundException("Student not found with id: " + id);
+        }
         repository.deleteById(id);
     }
 
-    public StudentRequestDto addStudent(StudentRequestDto dto){
-        studentModel.setAge(dto.getAge());
-        studentModel.setEmail(dto.getEmail());
-        studentModel.setName(dto.getName());
-
-
+    private StudentResponseDto map(studentModel s) {
+        return new StudentResponseDto(
+                s.getId(),
+                s.getName(),
+                s.getAge(),
+                s.getEmail()
+        );
     }
-
 }
 
 // services k andr 2 object kyo bnaye jaa rhi h
